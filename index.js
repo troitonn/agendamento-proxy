@@ -1,6 +1,7 @@
 const express = require('express');
 const axios = require('axios');
 const cors = require('cors');
+require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -33,15 +34,14 @@ app.get('/relatorio', async (req, res) => {
 
   // Definindo intervalo de 60 dias para trás até hoje
   const hoje = new Date();
-  const dataFimFinal = formatarData(hoje); // hoje
-  const dataInicioFinal = formatarData(adicionarDias(hoje, -59)); // 59 dias atrás
+  const dataFimFinal = formatarData(hoje);
+  const dataInicioFinal = formatarData(adicionarDias(hoje, -59));
 
-  // JSON que será enviado ao Feegow
   const payload = {
     report,
     DATA_INICIO: dataInicioFinal,
     DATA_FIM: dataFimFinal,
-    DATA_CRIACAO: "S"   // 👈 incluído conforme seu exemplo no Power Query
+    DATA_CRIACAO: "S"
   };
 
   try {
@@ -58,8 +58,16 @@ app.get('/relatorio', async (req, res) => {
 
     res.json(response.data);
   } catch (error) {
-    console.error(error.response?.data || error.message);
-    res.status(500).json({ error: 'Erro ao obter dados do Feegow' });
+    // DEBUG COMPLETO: mostra status, data e message do erro
+    console.error('Erro completo Feegow:', {
+      status: error.response?.status,
+      data: error.response?.data,
+      message: error.message
+    });
+
+    res.status(error.response?.status || 500).json({
+      error: error.response?.data || error.message
+    });
   }
 });
 
