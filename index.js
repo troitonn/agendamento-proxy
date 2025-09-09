@@ -33,7 +33,7 @@ app.get('/relatorio', async (req, res) => {
 
   const hoje = new Date();
   const dataFimFinal = formatarData(hoje);
-  const dataInicioFinal = formatarData(adicionarDias(hoje, -49));
+  const dataInicioFinal = formatarData(adicionarDias(hoje, -57));
 
   const payload = {
     report,
